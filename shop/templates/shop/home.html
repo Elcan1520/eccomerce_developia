@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Django App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f9fb;
+            text-align: center;
+            padding-top: 80px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+        }
+        .links {
+            margin-top: 40px;
+        }
+        a {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 25px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Django Project</h1>
+    <p>Explore the available sections:</p>
+    <div class="links">
+        <a href="/admin/">Admin Panel</a>
+        <a href="/api/products/">Shop API</a>
+        <a href="/api/categories/">Categories</a>
+        <a href="/api/docs/">API Docs</a>
+
+        <a href="{% url 'orders' %}">Orders</a>
+    </div>
+</body>
+</html>
