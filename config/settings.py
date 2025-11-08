@@ -5,14 +5,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 env.read_env(BASE_DIR / ".env")
 
-
 SECRET_KEY = env("SECRET_KEY")
-
-
 DEBUG = env.bool("DEBUG")
-
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -39,7 +34,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'conjig.urls'
+# 🔹 Dəyişiklik burada: conjig.urls → config.urls
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -56,8 +52,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'conjig.wsgi.application'
-
+# 🔹 Dəyişiklik burada: conjig.wsgi.application → config.wsgi.application
+WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
@@ -86,9 +82,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 STATIC_URL = 'static/'
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

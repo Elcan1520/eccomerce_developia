@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Product, Category, Order, OrderItem
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -13,6 +14,11 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderItemInputSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
+
+
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
@@ -20,33 +26,18 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
+    items = OrderItemInputSerializer(many=True, write_only=True)
+    order_items = OrderItemSerializer(source="items", many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ["id", "user", "total", "status", "created_at", "items"]
-        read_only_fields = ["user", "total", "status"]
+        fields = ["id", "user", "total", "status", "created_at", "items", "order_items"]
+        read_only_fields = ["id", "user", "total", "status", "created_at", "order_items"]
+
+    def validate_items(self, value):
+        if not value:
+            raise serializers.ValidationError("Sifarişdə ən azı bir məhsul olmalıdır.")
+        return value
 
     def create(self, validated_data):
-        items_data = validated_data.pop("items")
-        user = self.context["request"].user
-        order = Order.objects.create(user=user, **validated_data)
-
-        total = 0
-        for item in items_data:
-            product = item["product"]
-            quantity = item["quantity"]
-
-            if product.stock < quantity:
-                raise serializers.ValidationError(f"{product.name} üçün kifayət qədər stok yoxdur.")
-
-            product.stock -= quantity
-            product.save()
-
-            price = product.price * quantity
-            OrderItem.objects.create(order=order, product=product, quantity=quantity, price=price)
-            total += price
-
-        order.total = total
-        order.save()
-        return order
+        return Order.objects.create(user=self.context['request'].user)
